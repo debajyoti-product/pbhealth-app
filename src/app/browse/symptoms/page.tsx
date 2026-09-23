@@ -1,6 +1,6 @@
 "use client";
 import BottomNav from "@/components/BottomNav";
-import { ArrowLeft, Search as SearchIcon, Pill, Heart, Activity, Scissors, Bone, Baby, User, Brain, Eye, Wind, ShieldPlus, Droplets, Smile } from "lucide-react";
+import { ArrowLeft, Search as SearchIcon, Pill, Heart, Activity, Scissors, Bone, Baby, User, Brain, Eye, Wind, ShieldPlus, Droplets, Smile, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -74,6 +74,11 @@ const symptomCategories = [
 
 export default function BrowseSymptomsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  const toggleCategory = (title: string) => {
+    setExpandedCategories((current) => current.includes(title) ? current.filter((item) => item !== title) : [...current, title]);
+  };
 
   return (
     <div className="min-h-screen pb-28 bg-[#f5f5f5]">
@@ -99,7 +104,7 @@ export default function BrowseSymptomsPage() {
         </div>
       </div>
 
-      <div className="p-4 flex flex-col gap-6 mt-2">
+      <div className="p-4 flex flex-col gap-4 mt-2">
         {symptomCategories.map((category, index) => {
           // Filter symptoms based on search query
           const filteredSymptoms = category.symptoms.filter((symptom) =>
@@ -107,25 +112,38 @@ export default function BrowseSymptomsPage() {
           );
 
           if (filteredSymptoms.length === 0) return null;
+          const isExpanded = expandedCategories.includes(category.title);
+          const displayedSymptoms = isExpanded ? filteredSymptoms : filteredSymptoms.slice(0, 6);
+          const categoryQuery = encodeURIComponent(category.title);
 
           return (
-            <div key={index} className="bg-white rounded-2xl p-4 shadow-sm">
-              <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
-                {category.icon}
-                <h2 className="text-[14px] font-bold text-[#1a2b4a]">{category.title}</h2>
-              </div>
-              <ul className="grid grid-cols-2 gap-y-2 gap-x-2">
-                {filteredSymptoms.map((symptom, i) => (
-                  <li key={i}>
-                    <Link
-                      href={`/search/results?symptom=${encodeURIComponent(symptom)}`}
-                      className="block text-[13px] text-gray-600 hover:text-[#0a4d8c] hover:font-medium transition-colors p-1"
-                    >
-                      {symptom}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div key={index} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <Link
+                href={`/search/results?category=${categoryQuery}`}
+                className="block w-full p-3.5 text-left hover:bg-[#f8fbff] transition-colors"
+                aria-label={`Find doctors for ${category.title}`}
+              >
+                <div className="flex items-center gap-2 mb-2.5 border-b border-gray-100 pb-2">
+                  {category.icon}
+                  <h2 className="text-[14px] font-bold text-[#1a2b4a]">{category.title}</h2>
+                  <ChevronRight size={18} className="ml-auto text-[#0a4d8c]" />
+                </div>
+                <ul className="grid grid-cols-2 gap-y-1.5 gap-x-2">
+                  {displayedSymptoms.map((symptom) => (
+                    <li key={symptom} className="text-[12px] text-gray-600 truncate">{symptom}</li>
+                  ))}
+                </ul>
+              </Link>
+              {filteredSymptoms.length > 6 && (
+                <button
+                  type="button"
+                  onClick={() => toggleCategory(category.title)}
+                  className="w-full border-t border-gray-100 py-2 text-[11px] font-bold text-[#0a4d8c] flex items-center justify-center gap-1 hover:bg-[#f8fbff]"
+                >
+                  {isExpanded ? "Show less" : `View more (${filteredSymptoms.length - 6})`}
+                  {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+              )}
             </div>
           );
         })}

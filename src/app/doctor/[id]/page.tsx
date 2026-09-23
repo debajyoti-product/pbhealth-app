@@ -247,13 +247,19 @@ export default function DoctorProfile() {
           </p>
         </div>
 
-        <button className="bg-[#0a5898] hover:bg-[#084a82] active:scale-[0.98] transition-all text-white px-4 py-2.5 rounded-full font-bold flex items-center gap-2.5 shadow-sm">
-          <span className="text-[16px] font-extrabold tracking-tight">₹1,500</span>
-          <span className="w-px h-3.5 bg-white/30"></span>
-          <span className="text-[13px] font-semibold flex items-center gap-1">
-            Book Consult <ArrowRight size={14} />
-          </span>
-        </button>
+        {consultMode === "Online" ? (
+          <Link href="/cart" className="bg-[#0a5898] hover:bg-[#084a82] active:scale-[0.98] transition-all text-white px-4 py-2.5 rounded-full font-bold flex items-center gap-2.5 shadow-sm">
+            <span className="text-[16px] font-extrabold tracking-tight">₹1,500</span>
+            <span className="w-px h-3.5 bg-white/30"></span>
+            <span className="text-[13px] font-semibold flex items-center gap-1">Book Consult <ArrowRight size={14} /></span>
+          </Link>
+        ) : (
+          <button className="bg-[#0a5898] hover:bg-[#084a82] active:scale-[0.98] transition-all text-white px-4 py-2.5 rounded-full font-bold flex items-center gap-2.5 shadow-sm">
+            <span className="text-[16px] font-extrabold tracking-tight">₹1,500</span>
+            <span className="w-px h-3.5 bg-white/30"></span>
+            <span className="text-[13px] font-semibold flex items-center gap-1">Book Consult <ArrowRight size={14} /></span>
+          </button>
+        )}
       </div>
     </div>
   );

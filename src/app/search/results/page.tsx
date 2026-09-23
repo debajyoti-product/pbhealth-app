@@ -92,6 +92,7 @@ function SearchResultsContent() {
   const searchParams = useSearchParams();
   const symptom = searchParams.get("symptom");
   const specialty = searchParams.get("specialty");
+  const category = searchParams.get("category");
 
   const toggleFilter = (key: FilterKey) => {
     setActiveFilters((prev) =>
@@ -100,6 +101,18 @@ function SearchResultsContent() {
   };
 
   let filtered = [...doctors];
+
+  if (category) {
+    const categorySpecialties: Record<string, string[]> = {
+      "Heart Issues": ["Cardiology"],
+      "Stomach & Digestion": ["Gastroenterology"],
+      "Skin & Hair": ["Dermatology"],
+      "Bone & Joint": ["Orthopedics"],
+      "Brain & Nerves": ["Neurology"],
+    };
+    const matchingSpecialties = categorySpecialties[category];
+    if (matchingSpecialties) filtered = filtered.filter((doctor) => matchingSpecialties.includes(doctor.specialty));
+  }
 
   if (specialty) {
     const specialtyTerms: Record<string, string[]> = {
@@ -157,7 +170,7 @@ function SearchResultsContent() {
           <Link href="/search">
             <ArrowLeft size={22} className="text-gray-800" />
           </Link>
-          <h1 className="text-[18px] font-bold text-[#1a2b4a]">{symptom ? `Doctors for ${symptom}` : specialty ? `${specialty} Doctors` : "All Doctors"}</h1>
+          <h1 className="text-[18px] font-bold text-[#1a2b4a]">{symptom ? `Doctors for ${symptom}` : category ? `Doctors for ${category}` : specialty ? `${specialty} Doctors` : "All Doctors"}</h1>
         </div>
       </div>
 
